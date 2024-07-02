@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model direction {
+  langcode  String    @id @db.VarChar(10)
+  rtl       Boolean?  @default(true)
+  languages languages @relation(fields: [langcode], references: [langcode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model language_data {
+  langcode     String    @id @db.VarChar(10)
+  languagename String?   @db.VarChar(100)
+  languages    languages @relation(fields: [langcode], references: [langcode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model languages {
+  language_id   Int             @id @default(autoincrement())
+  langcode      String?         @unique @db.VarChar(10)
+  language      String?         @db.VarChar(100)
+  languagename  String?         @db.VarChar(100)
+  direction     direction?
+  language_data language_data?
+  obs_languages obs_languages[]
+}
+
+model obs_languages {
+  langcode   String?    @db.VarChar(10)
+  story_name String?    @db.VarChar(255)
+  id         Int        @id @default(autoincrement())
+  languages  languages? @relation(fields: [langcode], references: [langcode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model song_details {
+  id             Int             @id @default(autoincrement())
+  langcode       String?         @db.VarChar(10)
+  name           String?         @db.VarChar(512)
+  url            String?         @db.VarChar(512)
+  lyrics         String?         @db.VarChar(512)
+  song_languages song_languages? @relation(fields: [langcode], references: [langcode], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model song_languages {
+  id            Int            @id @default(autoincrement())
+  langcode      String?        @unique @db.VarChar(10)
+  language_name String?        @db.VarChar(100)
+  song_details  song_details[]
+}
