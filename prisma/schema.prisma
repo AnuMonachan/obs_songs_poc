@@ -33,6 +33,7 @@ model obs_languages {
   langcode   String?    @db.VarChar(10)
   story_name String?    @db.VarChar(255)
   id         Int        @id @default(autoincrement())
+  story_id   Int?
   languages  languages? @relation(fields: [langcode], references: [langcode], onDelete: NoAction, onUpdate: NoAction)
 }
 
